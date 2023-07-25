@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Confectionery.Data;
 using Confectionery.Data.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Confectionery.Controllers
 {
+    [Authorize]
     public class ClientesController : Controller
     {
         private readonly DataContext _context;
