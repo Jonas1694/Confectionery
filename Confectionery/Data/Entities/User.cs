@@ -32,7 +32,7 @@ namespace Confectionery.Data.Entities
         //TODO: Pending to put the correct paths
         [Display(Name = "Foto")]
         public string ImageFullPath => ImageId == Guid.Empty
-            ? $"https://localhost:44357/images/noimage.jpg"
+            ? $"https://localhost:7268/images/noimage.jpg"
             : $"https://shoppingzulu.blob.core.windows.net/users/{ImageId}";
 
         [Display(Name = "Tipo de usuario")]
