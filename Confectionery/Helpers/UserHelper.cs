@@ -81,7 +81,7 @@ namespace Confectionery.Helpers
 
         public async Task<SignInResult> LoginAsync(LoginViewModel model)
         {
-            return await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, false);
+            return await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, true);
         }
 
         public async Task LogoutAsync()
@@ -101,5 +101,14 @@ namespace Confectionery.Helpers
             return await _context.Users
                 .FirstOrDefaultAsync(u => u.Id == userId.ToString());
         }
-    }
+		public async Task<IdentityResult> ConfirmEmailAsync(User user, string token)
+		{
+			return await _userManager.ConfirmEmailAsync(user, token);
+		}
+
+		public async Task<string> GenerateEmailConfirmationTokenAsync(User user)
+		{
+			return await _userManager.GenerateEmailConfirmationTokenAsync(user);
+		}
+	}
 }

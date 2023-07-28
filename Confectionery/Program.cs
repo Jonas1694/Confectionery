@@ -15,19 +15,20 @@ builder.Services.AddDbContext<DataContext>(o =>
 //TODO: Make strongest password
 builder.Services.AddIdentity<User, IdentityRole>(cfg =>
 {
-    //cfg.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
-    //cfg.SignIn.RequireConfirmedEmail = true;
+    cfg.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
+    cfg.SignIn.RequireConfirmedEmail = true;
     cfg.User.RequireUniqueEmail = true;  //Condiciones
     cfg.Password.RequireDigit = false;
     cfg.Password.RequiredUniqueChars = 0;
     cfg.Password.RequireLowercase = false;
     cfg.Password.RequireNonAlphanumeric = false;
     cfg.Password.RequireUppercase = false;
-    //cfg.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-    //cfg.Lockout.MaxFailedAccessAttempts = 3;
-    //cfg.Lockout.AllowedForNewUsers = true;
+    cfg.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    cfg.Lockout.MaxFailedAccessAttempts = 3;
+    cfg.Lockout.AllowedForNewUsers = true;
 
-}).AddEntityFrameworkStores<DataContext>();
+})  .AddDefaultTokenProviders()
+	.AddEntityFrameworkStores<DataContext>();
 builder.Services.ConfigureApplicationCookie(options =>
 {
 	options.LoginPath = "/Account/NotAuthorized";
@@ -37,6 +38,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddTransient<SeedDB>();
 builder.Services.AddScoped<IUserHelper,UserHelper>();
+builder.Services.AddScoped<IMailHelper, MailHelper>();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 var app = builder.Build();
 seedData();
