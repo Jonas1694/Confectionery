@@ -38,7 +38,7 @@ namespace Confectionery.Controllers
             }
 
             var cliente = await _context.Clientes
-                .FirstOrDefaultAsync(m => m.id == id);
+                .FirstOrDefaultAsync(m => m.ClienteId == id);
             if (cliente == null)
             {
                 return NotFound();
@@ -50,7 +50,8 @@ namespace Confectionery.Controllers
         // GET: Clientes/Create
         public IActionResult Create()
         {
-            return View();
+			ViewData["TipoDocumentoId"] = new SelectList(_context.TipoDocumentos, "Documento", "Documento");
+			return View();
         }
 
         // POST: Clientes/Create
@@ -58,9 +59,17 @@ namespace Confectionery.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,Rif,RazonSocial,DireccionFiscal,Telefono,Correo,Fecha")] Cliente cliente)
+        public async Task<IActionResult> Create( Cliente cliente)
         {
-            if (ModelState.IsValid)
+			cliente.FechaRegistro = DateTime.Now;
+            cliente.UsuarioId = _context.Users.FirstOrDefault(w => w.Email == User.Identity.Name).Id;
+            ViewData["TipoDocumentoId"] = new SelectList(_context.TipoDocumentos, "Documento", "Documento", cliente.TipoDocumento);
+			if (_context.Clientes.Any(a => a.TipoDocumento == cliente.TipoDocumento && a.Rif == cliente.Rif))
+			{
+				ModelState.AddModelError(nameof(cliente.RazonSocial), $"El Rif {cliente.Rif} ya existe.!");
+				return View(cliente);
+			}
+			if (ModelState.IsValid)
             {
                 _context.Add(cliente);
                 await _context.SaveChangesAsync();
@@ -92,7 +101,7 @@ namespace Confectionery.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("id,Rif,RazonSocial,DireccionFiscal,Telefono,Correo,Fecha")] Cliente cliente)
         {
-            if (id != cliente.id)
+            if (id != cliente.ClienteId)
             {
                 return NotFound();
             }
@@ -106,7 +115,7 @@ namespace Confectionery.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ClienteExists(cliente.id))
+                    if (!ClienteExists(cliente.ClienteId))
                     {
                         return NotFound();
                     }
@@ -129,7 +138,7 @@ namespace Confectionery.Controllers
             }
 
             var cliente = await _context.Clientes
-                .FirstOrDefaultAsync(m => m.id == id);
+                .FirstOrDefaultAsync(m => m.ClienteId == id);
             if (cliente == null)
             {
                 return NotFound();
@@ -159,7 +168,7 @@ namespace Confectionery.Controllers
 
         private bool ClienteExists(int id)
         {
-          return (_context.Clientes?.Any(e => e.id == id)).GetValueOrDefault();
+          return (_context.Clientes?.Any(e => e.ClienteId == id)).GetValueOrDefault();
         }
     }
 }
