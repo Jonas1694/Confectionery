@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Confectionery.Controllers
 {
-    //[Authorize]
+    [Authorize(Roles ="Admin")]
     public class ClientesController : Controller
     {
         private readonly DataContext _context;
